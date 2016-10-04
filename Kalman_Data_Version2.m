@@ -1,11 +1,18 @@
-
 %KALMAN DATA CREATOR
-%1:04 AM SEPTEMBER 22nd 2016
+%sharmaabhinav@cmu.edu
+%Abhinav Sharma 
+%Carnegie Mellon University 
+
+%3:55 PM OCTOBER  3rd 2016
 %DETECTS FRAME IN ALL POSSIBLE CONDITIONS AND BOUNDING BOXES 
-%CURRENT VERSION ONLY USES DATA FROM THE FRAMES THAT HAVE TWO BOUNDING
-%BOXES ONLY.
 
+%The angle correction for the front foot classification has also been
+%inserted
 
+%THIS VERSION WORKS FOR RED FEET ONLY, FOR GREEN THE CONDITIONS WOULD HAVE
+%TO BE FLIPPED.
+
+%Data structures being used
 %CENTROID FORMAT >> [X1 Y1]
 %                   [X2 Y2]
 % frame_state.number = 1,2 or 3 >> 1 means single frame 2 means 2 and 3 means
@@ -14,17 +21,27 @@
 clc
 clear all
 load BLOB
-make_global
 %counter = 1; 
 %mcount = 1;
 first_frame_tag = 1 ;%one for front and 2 for hind required if both feet are not captured
 %in the first frame
+%Specify the centre of the wheel relative to which checking angle has to be
+%calculated
+centre = [262,203];
+%This is the line joining the centre to the edge of the frame relative to
+%which the angle is measured
+vec1  = [262 203 0] - [1 203 0];
 
+make_global
 
 for i = 1:1:size(BLOB.CENTROID,2)
     centres = BLOB.CENTROID{i};
     size_of_centres = size(centres,1);
-    
+    %This is done to deal with the fact that if there are only two bounding
+    %boxes but they are part of the same foot, then for sure the area of
+    %the smallest bounding box would be less than 200 pixels (this is
+    %assumed and may vary from one condition to another i.e. zoom level of
+    %the camera)
     if size_of_centres == 2
         areas = BLOB.AREA{i};
         small_area = areas(find(areas==min(areas)));
@@ -89,17 +106,35 @@ for i = 1:1:size(BLOB.CENTROID,2)
                   if (strcmp('F',frame_state.tag(i-1)))
                       
                      delta_X = abs(Front(i-1,1) - centres(1,1));
-                     if delta_X <= 15
+                     if delta_X <= 15 
                          Front(i,:) = centres;
                          frame_state.number(i) = 1;
                          frame_state.tag(i) = 'F';
                      else 
                        %either the foot has been lifted and put forward
-                       if (abs(centres(1,1) - 1) < abs(Front(i-1,1) - 1))
+                       %hence we calculate the x position of the foot from
+                       %the front boundary to determine what has happened
+                   vec2 = bsxfun(@minus,[centre 0],[centres 0]);
+                      
+                   if (abs(centres(1,1) - 1) < abs(Front(i-1,1) - 1))
                            Front(i,:) = centres;
                            frame_state.number(i) = 1;
                            frame_state.tag(i) = 'F';
-                        %or the foot in this frame is not the front foot 
+                        
+                        
+                        %for some outlier cases if the problem is not
+                        %resolved using the above methods, just as a final
+                        %check we would calculate the angle of the centroid
+                        %with respect to the centre of the wheel
+                       
+                        
+                       elseif ( acosd(dot(vec1,vec2)/(norm(vec1)*norm(vec2) )) < 95 )
+                           Front(i,:) = centres;
+                           frame_state.number(i) = 1;
+                           frame_state.tag(i) = 'F';
+                        
+                        
+                           %or the foot in this frame is not the front foot 
                         %this is an extreme case where we are assuming that
                         %in the previous frame there was only front foot
                         %and now suddenly this frame has a single bbox but
@@ -107,6 +142,7 @@ for i = 1:1:size(BLOB.CENTROID,2)
                         %the front foot but is difficult to be resolved for
                         %the hind foot so we will omit this check for the
                         %hind foot
+                        
                        else 
                            Hind(i,:) = centres;
                            frame_state.number(i) = 1;
