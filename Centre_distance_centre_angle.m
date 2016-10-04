@@ -2,6 +2,7 @@ clc
 
 clear all
 close all
+close figure(2)
 %Extracted from Kalman_Data_version2
 
 load Feet_position_allframes
