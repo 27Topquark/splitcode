@@ -12,7 +12,7 @@ maxIter = 100;
 llh = -inf(1,maxIter);
 for iter = 2:maxIter
 %     E-step
-    [nu, U, Ezz, Ezy, llh(iter)] = kalmanSmoother(X, model);
+    [nu, U, Ezz, Ezy, llh(iter)] = kalmanSmoother2(X, model);
     if llh(iter)-llh(iter-1) < tol*abs(llh(iter-1)); break; end   % check likelihood for convergence
 %     M-step 
     model = maximization(X, nu, U, Ezz, Ezy);

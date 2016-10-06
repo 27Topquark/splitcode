@@ -28,6 +28,7 @@ Hind = Hind';
     kalmanSmoother2(Front,model_smooth_front_allframes);
 
 %% Save
-
+clearvars -except nu_front_allframes nu_hind_allframes u_hind_allframes u_front_allframes
+save Kalman_smoothed_allframes
 
 
