@@ -22,10 +22,12 @@ Hind = Hind';
 [model_smooth_front_allframes,llh] = ldsEm(Front,model_init_front);
 
 [nu_hind_allframes ,u_hind_allframes, Ezz, Ezy, llh] = ...
-    kalmanSmoother(Hind,model_smooth_hind_allframes);
+    kalmanSmoother2(Hind,model_smooth_hind_allframes);
 
 [nu_front_allframes, u_front_allframes ,Ezz, Ezy, llh] = ...
     kalmanSmoother2(Front,model_smooth_front_allframes);
+
+%% Save
 
 
 
