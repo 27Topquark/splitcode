@@ -14,7 +14,7 @@ EMPTY_FRAMES_COUNTER = 1 ;
 BOUNDARY_CENTRE_COUNTER = 1;
 
 
-file_names_clip = dir('C:\Users\Abhinav\Documents\Abhinav Sharma Projects\Carnegie Mellon\Movie Frames from Low_def_13');
+file_names_clip = dir('C:\Users\Abhinav Sharma\Documents\Carnegie Mellon Research\CMU Lab Research\2016\Split Belt Analysis\Kalman Analysis\untitled folder GITTIS RED\Movie Frames from FILE0006_edit');
 for I=1:1:size(file_names_clip,1)
     file_name = file_names_clip(I).name;
       if (size(file_name,2)>5 && strcmp(file_name(1:5),'Frame'))
@@ -26,14 +26,14 @@ for I=1:1:size(file_names_clip,1)
 %Simple Contrast Enhancement
 A_feet = imread(file_name);
 A_contrast = imadjust(A_feet,[.45 .15 .15; .5 .2 .2],[],1);
-
+A_decorr = decorrstretch(A_feet);
 %Filtering for feet extraction
 for i=1:1:size(A_feet,1)
     for j = 1:1:size(A_feet,2)
-        B = A_contrast(i,j,:);
+        B = A_decorr(i,j,:);
         %Condition one for light or illuminted version, Condition two for
         %dark condition
-        if(B(1,1,1) > 200 && B(1,1,2) < 3 && B(1,1,3)< 3)
+        if(B(1,1,1) > 250 && B(1,1,2) < 3 && B(1,1,3)< 150)
             A_delta(i,j,:) = uint8([255 255 255]);
         else
             A_delta(i,j,:)=uint8([0 0 0]);
@@ -112,11 +112,11 @@ end
 
 %% Writing Movie Frames
 
-% RGB = insertShape(A_contrast, 'rectangle', BBOX, 'LineWidth', 2);
+RGB = insertShape(A_feet, 'rectangle', BBOX, 'LineWidth', 2);
 % RGB = insertShape(RGB, 'FilledCircle',CIRCLE_CENTROID, 'LineWidth', 5,'Color','black');
 % RGB = insertShape(RGB, 'FilledCircle',CIRCLE_CENTROID, 'LineWidth', 5,'Color','black');
-% frame_name = strcat('BBFrame_Lim0',file_name);
-% imwrite(RGB,frame_name);
+frame_name = strcat('BBFrame_Lim0',file_name);
+imwrite(RGB,frame_name);
 
 
       end

@@ -5,12 +5,12 @@
 clc
 clear all
 close all
-load Kalman_smoothed_allframes
+%load Kalman_smoothed_allframes
 load Feet_position_allframes
 
 %% Rearranging data for correct insertion
-nu_hind_allframes = nu_hind_allframes';
-nu_front_allframes = nu_front_allframes';
+% nu_hind_allframes = nu_hind_allframes';
+% nu_front_allframes = nu_front_allframes';
 
 Hind_x = Hind(:,1);
 Hind_y = Hind(:,2);
@@ -19,7 +19,7 @@ Front_y = Front(:,2);
 Hind = [Hind_x(Hind_x~=0), Hind_y(Hind_y~=0)];
 Front = [Front_x(Front_x~=0), Front_y(Front_y~=0)];
 
-clearvars -except Hind nu_hind_allframes Front nu_front_allframes frame_state
+%clearvars -except Hind nu_hind_allframes Front nu_front_allframes frame_state
 
 
 %% 
@@ -28,7 +28,7 @@ clearvars -except Hind nu_hind_allframes Front nu_front_allframes frame_state
 insert_front = 1;
 insert_hind = 1;
 
-file_names_clip = dir('C:\Users\Abhinav Sharma\Documents\Carnegie Mellon Research\CMU Lab Research\2016\Split Belt Analysis\Kalman Analysis\Movie Frames from Low_def_13');
+file_names_clip = dir('C:\Users\Abhinav Sharma\Documents\Carnegie Mellon Research\CMU Lab Research\2016\Split Belt Analysis\Kalman Analysis\untitled folder GITTIS RED\Movie Frames from FILE0006_edit');
 
 for i=1:1:size(file_names_clip,1)
     file_name = file_names_clip(i).name;
@@ -47,8 +47,8 @@ for i=1:1:size(file_names_clip,1)
                       RGB = insertShape(frame, 'filledcircle',...
                           [Front(insert_front,:) 6], 'color', 'green');
                       %inserting Kalman output
-                      RGB = insertShape(RGB, 'filledcircle',...
-                          [nu_front_allframes(insert_front,:) 6], 'color', 'yellow');
+%                       RGB = insertShape(RGB, 'filledcircle',...
+%                           [nu_front_allframes(insert_front,:) 6], 'color', 'yellow');
                       %inserting classification annotation
                       RGB = insertObjectAnnotation(RGB,'circle',[Front(insert_front,:) 20],...
                           'Front Paw','LineWidth',2,'Color','white','TextColor','white');
@@ -64,9 +64,9 @@ for i=1:1:size(file_names_clip,1)
                        %inserting actual output
                       RGB = insertShape(frame, 'filledcircle',...
                           [Hind(insert_hind,:) 6], 'color', 'green');
-                      %inserting Kalman output
-                      RGB = insertShape(RGB, 'filledcircle',...
-                          [nu_hind_allframes(insert_hind,:) 6], 'color', 'yellow');
+                       %inserting Kalman output
+%                       RGB = insertShape(RGB, 'filledcircle',...
+%                           [nu_hind_allframes(insert_hind,:) 6], 'color', 'yellow');
                       %inserting classification annotation
                       RGB = insertObjectAnnotation(RGB,'circle',[Hind(insert_hind,:) 20],...
                           'Hind Paw','LineWidth',2,'Color','white','TextColor','white');
@@ -81,8 +81,8 @@ for i=1:1:size(file_names_clip,1)
                       RGB = insertShape(frame, 'filledcircle',...
                           [Front(insert_front,:) 6], 'color', 'green');
                       %inserting Kalman output
-                      RGB = insertShape(RGB, 'filledcircle',...
-                          [nu_front_allframes(insert_front,:) 6], 'color', 'yellow');
+%                       RGB = insertShape(RGB, 'filledcircle',...
+%                           [nu_front_allframes(insert_front,:) 6], 'color', 'yellow');
                       %inserting classification annotation
                       RGB = insertObjectAnnotation(RGB,'circle',[Front(insert_front,:) 20],...
                           'Front Paw','LineWidth',2,'Color','white','TextColor','white');
@@ -93,8 +93,8 @@ for i=1:1:size(file_names_clip,1)
                       RGB = insertShape(RGB, 'filledcircle',...
                           [Hind(insert_hind,:) 6], 'color', 'green');
                       %inserting Kalman output
-                      RGB = insertShape(RGB, 'filledcircle',...
-                          [nu_hind_allframes(insert_hind,:) 6], 'color', 'yellow');
+%                       RGB = insertShape(RGB, 'filledcircle',...
+%                           [nu_hind_allframes(insert_hind,:) 6], 'color', 'yellow');
                       %inserting classification annotation
                       RGB = insertObjectAnnotation(RGB,'circle',[Hind(insert_hind,:) 20],...
                           'Hind Paw','LineWidth',2,'Color','white','TextColor','white');

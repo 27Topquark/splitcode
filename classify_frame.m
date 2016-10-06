@@ -13,6 +13,7 @@ make_global
 %that will require averaging
 centres = BLOB.CENTROID{i};
 
+
 switch condition
     
     
@@ -30,12 +31,25 @@ switch condition
                          frame_state.number(i) = 1;
                          frame_state.tag(i) = 'F';
                      else 
+                         vec2 = bsxfun(@minus,[centre 0],[centres 0]);
                        %either the foot has been lifted and put forward
                        if (abs(centres(1,1) - 1) < abs(Front(j,1) - 1))
                            Front(i,:) = centres;
                            frame_state.number(i) = 1;
                            frame_state.tag(i) = 'F';
-                        %or the foot in this frame is not the front foot 
+                         %for some outlier cases if the problem is not
+                        %resolved using the above methods, just as a final
+                        %check we would calculate the angle of the centroid
+                        %with respect to the centre of the wheel
+                       
+                        
+                       elseif ( acosd(dot(vec1,vec2)/(norm(vec1)*norm(vec2) )) < 95 )
+                           Front(i,:) = centres;
+                           frame_state.number(i) = 1;
+                           frame_state.tag(i) = 'F';
+                        
+                        
+                           %or the foot in this frame is not the front foot 
                         %this is an extreme case where we are assuming that
                         %in the previous frame there was only front foot
                         %and now suddenly this frame has a single bbox but

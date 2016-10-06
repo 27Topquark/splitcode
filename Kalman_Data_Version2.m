@@ -221,3 +221,6 @@ end
 %     sqr = bsxfun(fun,mat,centre);
 % end
 
+
+%clearvars -except Front Hind frame_state
+%save Feet_position_allframes
