@@ -13,7 +13,7 @@ workspace;  % Make sure the workspace panel is showing.
 fontSize = 22;
 
 %% 
-movieFullFileName = 'Movie_002.mp4';
+movieFullFileName = 'FILE0003-0.7_edit.mp4';
 try
 	videoObject = VideoReader(movieFullFileName);
 	% Determine how many frames there are.
@@ -51,9 +51,9 @@ try
 	
 	% Loop through the movie, writing all frames out.
 	frame = 1;
-	while frame < numberOfFrames
+	while frame <= numberOfFrames
 		% Extract the frame from the movie structure.
-		thisFrame = read(videoObject, frame);
+		thisFrame = read(videoObject, frame,'Native');
 		frame = frame + 1;
 		% Display it
 		hImage = subplot(2, 2, 1);

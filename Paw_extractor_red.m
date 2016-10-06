@@ -1,34 +1,30 @@
+%% Preparing interface and clearing all variables
 clc
 clear all
 close all
-A = imread('Frame 0152.png');
+%% Initial frame processing
 
-A_contrast = imadjust(A,[.45 .15 .15; .5 .2 .2],[],1);%GIVING GOOD POINTS
+A = imread('Frame 0152.png');
 A_decorr = decorrstretch(A);
-%  A_contrast = imadjust(A,[.3 .4 .45; .6 .7 .6],[],1); %GIVING GOOD CONTRAST
+
+%OLD CONTRAST ENHANCEMENT TECHNIQUES NOT USED AS OF OCTOBER 6TH 2016
+%  A_contrast = imadjust(A,[.45 .15 .15; .5 .2 .2],[],1);
+%  A_contrast = imadjust(A,[.3 .4 .45; .6 .7 .6],[],1); 
 %  A_contrast = imadjust(A,[.2 .4 .45; .6 .7 .6],[],1); 
-%   A_contrast = imadjust(A,[.15 .4 .45; .6 .7 .6],[],1); 
+%  A_contrast = imadjust(A,[.15 .4 .45; .6 .7 .6],[],1); 
 
 %---------------------THE WONDER FIGURES-----------------------------------
 % A_contrast = imadjust(A,[.45 .15 .15; .5 .2 .2],[],1); at +0.3 or +0.7
-% exposure
 
-% figure(1), imshow(A_contrast);
-% figure(2), imshow(A);
-% figure(3), imshow(A(:,:,1));
-% figure(4), imshow(A(:,:,2));
-% figure(5), imshow(A(:,:,3));
-% figure(6) , imshow(A_contrast(:,:,3));
 
-%% 
+%% Filtering via thresholding for channel values
+%  Making dilation and erosion changes for blob detection
 
-%Filtering for feet extraction
 for i=1:1:size(A,1)
     for j = 1:1:size(A,2)
         B = A_decorr(i,j,:);
-        %Condition one for light or illuminted version, Condition two for
-        %dark condition
-        if(B(1,1,1) > 250 && B(1,1,2) < 2 && B(1,1,3)<150)
+        %THRESHOLDING SECTION
+        if(B(1,1,1) > 250 && B(1,1,2) < 2 && B(1,1,3)<150) %SET APPROPRIATE THRESHOLDS
             A_delta(i,j,:) = uint8([255 255 255]);
         else
             A_delta(i,j,:)=uint8([0 0 0]);
@@ -37,35 +33,30 @@ for i=1:1:size(A,1)
     
 end
 
-
 A_delta_crop_bin = (im2bw(A_delta,0.1));
 A_delta_crop_bin= bwareaopen(A_delta_crop_bin, 40);
 A_delta_crop_gray = rgb2gray(A_delta);
-% imshow(A_delta_crop_bin);
 A_delta = im2bw(A_delta);
-
-se = strel('sphere',5); %263 resolved with 5
-
+se = strel('sphere',5);
 dilatedI = imdilate(A_delta_crop_bin,se);
 
-%% 
+%% Blob analysis using built-in MATLAB packages
 
 H = vision.BlobAnalysis;
 H.ExcludeBorderBlobs = 0;
 H.MinimumBlobArea = 150;
 H.LabelMatrixOutputPort = 1;
+[AREA,CENTROID,BBOX,LABEL] = step(H,dilatedI);
 
-[AREA,CENTROID,BBOX,LABEL] = step(H,dilatedI);%A_delta_crop_bin);
 
-
-%% 
+%% Output
+%  Check figure 2 get an idea about how well the stretching algorithm is
+%  working for the current lighting conditions
+%  Check figure 1 for bounding box outputs
 
 
 RGB = insertShape(A, 'rectangle', BBOX, 'LineWidth', 2);
-% figure(1),imshow(RGB);
-% 
-% figure(3),imshow(A_decorr);
+figure(1),imshow(RGB);
+figure(2),imshow(A_decorr);
 
-% RGB2 = insertShape(A_crop,'circle',[CENTROID 8],'LineWidth',2);
-% imshow(RGB2);
 
